@@ -46,7 +46,7 @@ def print_groups():
         print("Group: ", end="")
         for m in zg.members:
             if (m.player_name == zg.coordinator.player_name):
-                print("{}* ".format(m.player_name), end="")
+                print("[{}] ".format(m.player_name), end="")
             else:
                 print(m.player_name, end=" ")
         print("")
