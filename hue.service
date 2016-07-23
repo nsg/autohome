@@ -1,0 +1,14 @@
+[Unit]
+Description=Hue service script
+
+[Service]
+ExecStart=/usr/local/bin/hue.sh
+User=nobody
+Group=nogroup
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
