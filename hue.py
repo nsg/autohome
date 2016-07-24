@@ -22,6 +22,8 @@
 
 from phue import Bridge
 import logging, datetime, time, os
+from flask import Flask
+from flask import render_template
 
 class House:
 
@@ -55,14 +57,22 @@ class House:
 
 logging.basicConfig()
 house = House()
+app = Flask(__name__)
 
-while True:
-    s = time.strftime("%H:%M:%S")
+@app.route("/")
+def index():
+    return render_template('index.html')
 
-    # Every minute
-    if datetime.datetime.now().second == 0:
-        for l in house.lights():
-            if not house.is_locked(l):
-                house.time_based_white(l.name)
+if __name__ == "__main__":
+    application.run(host='0.0.0.0')
 
-    time.sleep(1)
+#while True:
+#    s = time.strftime("%H:%M:%S")
+#
+#    # Every minute
+#    if datetime.datetime.now().second == 0:
+#        for l in house.lights():
+#            if not house.is_locked(l):
+#                house.time_based_white(l.name)
+#
+#    time.sleep(1)
