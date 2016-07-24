@@ -43,12 +43,24 @@ class House:
     def lock_file(self, lamp):
         open("/var/lib/hue/locks/{}".format(lamp.light_id), 'a').close()
 
+    def save_state(self, action):
+        fd = open("/var/lib/hue/state", 'w')
+        fd.write(action)
+        fd.close()
+
+    def load_state(self):
+        fd = open("/var/lib/hue/state", 'r')
+        r = fd.read()
+        fd.close()
+        return r
+
     def brightness(self, lamp, value, time=1):
         lamp.on = True
         self.hue.set_light(lamp.light_id, 'bri', value, transitiontime=time)
 
     def time_based_white(self, light):
-        if not self.hue.get_light(light, 'on'): return
+        if not self.hue.get_light(light.name, 'on'): return False
+        if not self.hue.get_light(light.name, 'reachable'): return False
 
         hour = datetime.datetime.now().hour
 
@@ -57,8 +69,13 @@ class House:
         if hour < 8:
             hour = 24
 
-        ct = (500-154)/24
-        self.hue.set_light(light, 'ct', 154 + ct * hour)
+        ct = 154 + ((500-154)/24) * hour
+
+        if (light.colortemp != ct):
+            self.hue.set_light(light.name, 'ct', ct)
+            return True
+
+        return False
 
 logging.basicConfig()
 house = House()
@@ -77,7 +94,11 @@ def set_state():
     return render_template('set-state.html')
 
 @app.route("/set-state/<action>")
-def set_state_normal(action="normal"):
+def set_state_url(action="normal"):
+    set_state(action)
+    return redirect("/set-state", code=302)
+
+def set_state(action):
     hour = datetime.datetime.now().hour
 
     if action == "normal":
@@ -134,7 +155,7 @@ def set_state_normal(action="normal"):
         for l in house.lights():
             l.on = False
 
-    return redirect("/set-state", code=302)
+    house.save_state(action)
 
 @app.route("/api/hue/<int:lamp_id>/state/<state>")
 def lamp_on(lamp_id, state):
@@ -151,9 +172,11 @@ def tick():
     msg = []
     for l in house.lights():
         if not house.is_locked(l):
-            msg.append("Set light {} to time based white".format(l.name))
-            house.time_based_white(l.name)
-    msg.append("")
+            if (house.time_based_white(l)):
+                msg.append("Set light {} to time based white".format(l.name))
+
+    msg.append("Restore cached state\n")
+    set_state(house.load_state())
     return "\n".join(msg)
 
 if __name__ == "__main__":
