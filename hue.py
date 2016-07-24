@@ -210,8 +210,8 @@ def tick():
         msg.append("Restore cached state\n")
 
     # Control lamps
-    msg = msg + house.lamp_state_control("Hall spot 1", "off")
-    msg = msg + house.lamp_state_control("Vardagsrum 1", "bed")
+    #msg = msg + house.lamp_state_control("Hall spot 1", "off")
+    #msg = msg + house.lamp_state_control("Vardagsrum 1", "bed")
 
     return "\n".join(msg)
 
