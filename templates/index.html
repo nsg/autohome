@@ -1,1 +1,41 @@
-test
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>IOT Home Control</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <div class="container">
+            <h1>IOT Home Control</h1>
+            <table class="table">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Colormode</th>
+                    <th>Saturation</th>
+                    <th>XY</th>
+                    <th>Colortemp</th>
+                    <th>Brightness</th>
+                    <th>Hue</th>
+                    <th>On</th>
+                </tr>
+                {% for lamp in lamps %}
+                    {% if not lamp.on %}<tr class="danger">{% else  %}<tr>{% endif %}
+                        <td>{{ lamp.light_id }}</td>
+                        <td>{{ lamp.name }}</td>
+                        <td>{{ lamp.colormode }}</td>
+                        <td>{{ lamp.saturation }}</td>
+                        <td>{{ lamp.xy }}</td>
+                        <td>{{ lamp.colortemp }}</td>
+                        <td>{{ lamp.brightness }}</td>
+                        <td>{{ lamp.hue }}</td>
+                        <td>{{ lamp.on }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </body>
+</html>
