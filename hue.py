@@ -61,18 +61,21 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template('index.html', lamps=house.lights())
+    return render_template('index.html')
+
+@app.route("/hue-status")
+def hue_status():
+    return render_template('hue-status.html', lamps=house.lights())
+
+@app.route("/tick")
+def tick():
+    msg = []
+    for l in house.lights():
+        if not house.is_locked(l):
+            msg.append("Set light {} to time based white".format(l.name))
+            house.time_based_white(l.name)
+    msg.append("")
+    return "\n".join(msg)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
-
-#while True:
-#    s = time.strftime("%H:%M:%S")
-#
-#    # Every minute
-#    if datetime.datetime.now().second == 0:
-#        for l in house.lights():
-#            if not house.is_locked(l):
-#                house.time_based_white(l.name)
-#
-#    time.sleep(1)

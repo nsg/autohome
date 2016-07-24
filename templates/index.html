@@ -1,30 +1,5 @@
 {% extends "layout.html" %}
 {% block container %}
     <h1>IOT Home Control</h1>
-    <table class="table">
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Colormode</th>
-            <th>Saturation</th>
-            <th>XY</th>
-            <th>Colortemp</th>
-            <th>Brightness</th>
-            <th>Hue</th>
-            <th>On</th>
-        </tr>
-        {% for lamp in lamps %}
-            {% if not lamp.on %}<tr class="danger">{% else  %}<tr>{% endif %}
-                <td>{{ lamp.light_id }}</td>
-                <td>{{ lamp.name }}</td>
-                <td>{{ lamp.colormode }}</td>
-                <td>{{ lamp.saturation }}</td>
-                <td>{{ lamp.xy }}</td>
-                <td>{{ lamp.colortemp }}</td>
-                <td>{{ lamp.brightness }}</td>
-                <td>{{ lamp.hue }}</td>
-                <td>{{ lamp.on }}</td>
-            </tr>
-        {% endfor %}
-    </table>
+    <p>Control system for my home</p>
 {% endblock %}
