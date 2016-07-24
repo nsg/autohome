@@ -24,6 +24,8 @@ from phue import Bridge
 import logging, datetime, time, os
 from flask import Flask
 from flask import render_template
+from flask import redirect
+import re
 
 class House:
 
@@ -40,6 +42,10 @@ class House:
 
     def lock_file(self, lamp):
         open("/var/lib/hue/locks/{}".format(lamp.light_id), 'a').close()
+
+    def brightness(self, lamp, value, time=1):
+        lamp.on = True
+        self.hue.set_light(lamp.light_id, 'bri', value, transitiontime=time)
 
     def time_based_white(self, light):
         if not self.hue.get_light(light, 'on'): return
@@ -65,6 +71,70 @@ def index():
 @app.route("/hue")
 def hue_status():
     return render_template('hue-status.html', lamps=house.lights())
+
+@app.route("/set-state")
+def set_state():
+    return render_template('set-state.html')
+
+@app.route("/set-state/<action>")
+def set_state_normal(action="normal"):
+    hour = datetime.datetime.now().hour
+
+    if action == "normal":
+        for l in house.lights():
+            if re.match(r'^Hall spot', l.name):
+                house.brightness(l, 150, 100)
+            if re.match(r'^Vardagsrum', l.name):
+                house.brightness(l, 201, 100)
+
+            if l.name == "Kitchen":
+                house.brightness(l, 201, 100)
+            if re.match(r'^Kitchen Bench', l.name):
+                if 6 > hour or hour > 18:
+                    house.brightness(l, 201, 100)
+                else:
+                    l.on = False
+
+            if l.name == "Soffa":
+                l.on = False
+            if l.name == "Soffa Large":
+                if 6 > hour or hour > 18:
+                    house.brightness(l, 201, 100)
+                else:
+                    l.on = False
+            if l.name == "Bedroom":
+                l.on = False
+
+    if action == "movie":
+        for l in house.lights():
+            if re.match(r'^Hall spot', l.name):
+                house.brightness(l, 50, 100)
+            if re.match(r'^Vardagsrum', l.name):
+                house.brightness(l, 50, 100)
+
+            if l.name == "Soffa":
+                house.brightness(l, 250, 100)
+            if l.name == "Soffa Large":
+                house.brightness(l, 50, 100)
+
+    if action == "bed":
+        for l in house.lights():
+            if re.match(r'^Hall spot', l.name):
+                l.on = False
+            if re.match(r'^Vardagsrum', l.name):
+                l.on = False
+            if re.match(r'^Soffa', l.name):
+                l.on = False
+            if re.match(r'^Kitchen', l.name):
+                l.on = False
+            if l.name == "Bedroom":
+                house.brightness(l, 150, 100)
+
+    if action == "off":
+        for l in house.lights():
+            l.on = False
+
+    return redirect("/set-state", code=302)
 
 @app.route("/api/hue/<int:lamp_id>/state/<state>")
 def lamp_on(lamp_id, state):
