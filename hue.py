@@ -54,7 +54,6 @@ class House:
         ct = (500-154)/24
         self.hue.set_light(light, 'ct', 154 + ct * hour)
 
-
 logging.basicConfig()
 house = House()
 app = Flask(__name__)
@@ -63,9 +62,19 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route("/hue-status")
+@app.route("/hue")
 def hue_status():
     return render_template('hue-status.html', lamps=house.lights())
+
+@app.route("/api/hue/<int:lamp_id>/state/<state>")
+def lamp_on(lamp_id, state):
+    for l in house.lights():
+        if l.light_id == lamp_id:
+            if state == "on":
+                l.on = True
+            else:
+                l.on = False
+            return "Set lamp {} to {}\n".format(l.name, state)
 
 @app.route("/tick")
 def tick():
@@ -78,4 +87,4 @@ def tick():
     return "\n".join(msg)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=True)
