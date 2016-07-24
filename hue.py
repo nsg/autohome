@@ -96,6 +96,7 @@ def set_state_index():
 
 @app.route("/set-state/<action>")
 def set_state_url(action="normal"):
+    house.state_dirty = True
     set_state(action)
     return redirect("/set-state", code=302)
 
