@@ -209,8 +209,9 @@ def tick():
     if set_state(house.load_state()):
         msg.append("Restore cached state\n")
 
-    # Hall spot 1 is a control lamp for off state
+    # Control lamps
     msg = msg + house.lamp_state_control("Hall spot 1", "off")
+    msg = msg + house.lamp_state_control("Vardagsrum 1", "bed")
 
     return "\n".join(msg)
 
