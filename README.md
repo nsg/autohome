@@ -14,3 +14,7 @@ Unit-file for systemd for hue.sh
 ## sonos.py
 
 Control script that talks with my sonos speakers.
+
+## telstick-deviceevent.sh
+
+Trigged by telldusd when we recv a event.
