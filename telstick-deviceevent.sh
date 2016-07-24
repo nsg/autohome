@@ -11,3 +11,13 @@ if [[ $DEVICEID == 1 ]]; then
     fi
 
 fi
+
+if [[ $DEVICEID == 2 ]]; then
+
+        if [[ $METHOD == 1 ]]; then
+                :
+        else
+                curl 10.90.0.223:5000/set-state/bed
+        fi
+
+fi
