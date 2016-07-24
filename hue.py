@@ -30,6 +30,7 @@ import re
 class House:
 
     hue = None
+    state_dirty = True
 
     def __init__(self):
         self.hue = Bridge(ip='10.90.0.106', config_file_path="/var/lib/hue/hue.conf")
@@ -90,7 +91,7 @@ def hue_status():
     return render_template('hue-status.html', lamps=house.lights())
 
 @app.route("/set-state")
-def set_state():
+def set_state_index():
     return render_template('set-state.html')
 
 @app.route("/set-state/<action>")
@@ -99,6 +100,8 @@ def set_state_url(action="normal"):
     return redirect("/set-state", code=302)
 
 def set_state(action):
+    if not house.state_dirty: return False
+
     hour = datetime.datetime.now().hour
 
     if action == "normal":
@@ -156,6 +159,8 @@ def set_state(action):
             l.on = False
 
     house.save_state(action)
+    house.state_dirty = False
+    return True
 
 @app.route("/api/hue/<int:lamp_id>/state/<state>")
 def lamp_on(lamp_id, state):
@@ -175,8 +180,9 @@ def tick():
             if (house.time_based_white(l)):
                 msg.append("Set light {} to time based white".format(l.name))
 
-    msg.append("Restore cached state\n")
-    set_state(house.load_state())
+    if set_state(house.load_state()):
+        msg.append("Restore cached state\n")
+
     return "\n".join(msg)
 
 if __name__ == "__main__":
