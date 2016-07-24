@@ -31,12 +31,17 @@ class House:
 
     hue = None
     state_dirty = True
+    state = None
+    was_state = None
 
     def __init__(self):
         self.hue = Bridge(ip='10.90.0.106', config_file_path="/var/lib/hue/hue.conf")
 
     def lights(self):
         return self.hue.lights
+
+    def lights_name(self):
+        return self.hue.get_light_objects('name')
 
     def is_locked(self, lamp):
         return os.path.isfile("/var/lib/hue/locks/{}".format(lamp.light_id))
@@ -48,16 +53,33 @@ class House:
         fd = open("/var/lib/hue/state", 'w')
         fd.write(action)
         fd.close()
+        self.was_state = self.state
+        self.state = action
 
     def load_state(self):
         fd = open("/var/lib/hue/state", 'r')
         r = fd.read()
         fd.close()
+        self.was_state = self.state
+        self.state = r
         return r
 
     def brightness(self, lamp, value, time=1):
         lamp.on = True
         self.hue.set_light(lamp.light_id, 'bri', value, transitiontime=time)
+
+    def lamp_state_control(self, lamp_name, state, restore_to="normal"):
+        msg = []
+        if self.was_state != state and not self.lights_name()[lamp_name].reachable:
+            self.state_dirty = True
+            if set_state(state):
+                msg.append("{} unreachable, set state to {}".format(lamp_name, state))
+        elif self.was_state == state and self.lights_name()[lamp_name].reachable:
+            self.state_dirty = True
+            if set_state(restore_to):
+                msg.append("{} reachable, restore state to {}".format(lamp_name, restore_to))
+
+        return msg
 
     def time_based_white(self, light):
         if not self.hue.get_light(light.name, 'on'): return False
@@ -176,13 +198,19 @@ def lamp_on(lamp_id, state):
 @app.route("/tick")
 def tick():
     msg = []
+
+    # Set a nice time-based white color
     for l in house.lights():
         if not house.is_locked(l):
             if (house.time_based_white(l)):
                 msg.append("Set light {} to time based white".format(l.name))
 
+    # Restore the state, if it's dirty
     if set_state(house.load_state()):
         msg.append("Restore cached state\n")
+
+    # Hall spot 1 is a control lamp for off state
+    msg = msg + house.lamp_state_control("Hall spot 1", "off")
 
     return "\n".join(msg)
 
