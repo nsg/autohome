@@ -1,2 +1,4 @@
 phue
 soco
+uwsgi
+flask
