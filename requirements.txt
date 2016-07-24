@@ -1,4 +1,4 @@
-phue
+git+git://github.com/studioimaginaire/phue@29bde636baebe5d5c7016432d5087bd38a9a9151
 soco
 uwsgi
 flask

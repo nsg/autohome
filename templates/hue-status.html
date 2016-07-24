@@ -12,9 +12,16 @@
             <th>Brightness</th>
             <th>Hue</th>
             <th>On</th>
+            <th>Reachable</th>
         </tr>
         {% for lamp in lamps %}
-            {% if not lamp.on %}<tr class="danger">{% else  %}<tr>{% endif %}
+            {% if not lamp.reachable %}
+                <tr class="danger">
+            {% elif not lamp.on %}
+                <tr class="warning">
+            {% else  %}
+                <tr>
+            {% endif %}
                 <td>{{ lamp.light_id }}</td>
                 <td>{{ lamp.name }}</td>
                 <td>{{ lamp.colormode }}</td>
@@ -24,6 +31,7 @@
                 <td>{{ lamp.brightness }}</td>
                 <td>{{ lamp.hue }}</td>
                 <td>{{ lamp.on }}</td>
+                <td>{{ lamp.reachable }}</td>
             </tr>
         {% endfor %}
     </table>
