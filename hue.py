@@ -114,7 +114,8 @@ def hue_status():
 
 @app.route("/set-state")
 def set_state_index():
-    return render_template('set-state.html')
+    states = [ "Normal", "Movie", "Bed", "Off" ]
+    return render_template('set-state.html', active_state=house.load_state(), states=states)
 
 @app.route("/set-state/<action>")
 def set_state_url(action="normal"):
