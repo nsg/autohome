@@ -123,7 +123,7 @@ def switch():
 
 @app.route("/set-state")
 def set_state_index():
-    states = [ "Normal", "Movie", "Bed", "Off" ]
+    states = [ "Normal", "Movie", "Bed", "Cozy", "Off" ]
     return render_template('set-state.html', active_state=house.load_state(), states=states)
 
 @app.route("/set-state/<action>")
@@ -203,6 +203,22 @@ def set_state(action):
                 house.brightness(l, 250, 100)
             if l.name == "Soffa Large":
                 house.brightness(l, 50, 100)
+
+    if action == "cozy":
+        for l in house.lights():
+            if re.match(r'^Hall spot', l.name):
+                house.brightness(l, 50, 100)
+            if re.match(r'^Vardagsrum', l.name):
+                house.brightness(l, 140, 100)
+
+            if l.name == "Soffa":
+                l.on = False
+            if l.name == "Soffa Large":
+                house.brightness(l, 150, 100)
+            if re.match(r'^Kitchen Bench', l.name):
+                house.brightness(l, 50, 100)
+            if l.name == "Kitchen":
+                house.brightness(l, 90, 100)
 
     if action == "bed":
         for l in house.lights():
