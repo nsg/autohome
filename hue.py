@@ -141,6 +141,16 @@ def telldus(deviceid, method):
         else:
             set_state("bed")
 
+    # Door Switch
+    if deviceid == 3:
+        if method == 1: # Door opens
+            if (house.load_state() == "normal"):
+                set_state("off")
+            if (house.load_state() == "off"):
+                set_state("normal")
+        if method == 2: # Door closes
+            pass
+
     return "Got a event with deviceid:{} and method:{}".format(deviceid, method)
 
 def set_state(action):
