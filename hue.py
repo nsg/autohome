@@ -112,6 +112,15 @@ def index():
 def hue_status():
     return render_template('hue-status.html', lamps=house.lights())
 
+@app.route("/switch")
+def switch():
+    switches = [
+        {"name": "Wall 1", "id": 1 },
+        {"name": "Wall 2", "id": 2 },
+        {"name": "Door",   "id": 3 }
+    ]
+    return render_template('switch.html', switches=switches)
+
 @app.route("/set-state")
 def set_state_index():
     states = [ "Normal", "Movie", "Bed", "Off" ]
@@ -151,7 +160,7 @@ def telldus(deviceid, method):
         if method == 2: # Door closes
             pass
 
-    return "Got a event with deviceid:{} and method:{}".format(deviceid, method)
+    return redirect("/switch", code=302)
 
 def set_state(action):
     if not house.state_dirty: return False

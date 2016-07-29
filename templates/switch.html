@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block container %}
+    <h1>Switch</h1>
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>DeviceID</th>
+            <th>State</th>
+        </tr>
+        {% for switch in switches %}
+        <tr>
+            <td>{{ switch.name }}</td>
+            <td>{{ switch.id }}</td>
+            <td><a class="btn btn-default btn-sm" href="/telldus/{{ switch.id }}/1" role="button">1</a><a class="btn btn-default btn-sm" href="/telldus/{{ switch.id }}/2" role="button">2</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
