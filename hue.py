@@ -122,6 +122,26 @@ def set_state_url(action="normal"):
     set_state(action)
     return redirect("/set-state", code=302)
 
+@app.route("/telldus/<int:deviceid>/<int:method>")
+def telldus(deviceid, method):
+    house.state_dirty = True
+
+    # Wall Switch - Button 1
+    if deviceid == 1:
+        if method == 1:
+            set_state("normal")
+        else:
+            set_state("off")
+
+    # Wall Switch - Button 2
+    if deviceid == 2:
+        if method == 1:
+            pass
+        else:
+            set_state("bed")
+
+    return "Got a event with deviceid:{} and method:{}".format(deviceid, method)
+
 def set_state(action):
     if not house.state_dirty: return False
 
