@@ -164,9 +164,7 @@ def sonos_normal():
             s.volume = 8
 
 def set_state(action):
-    if not state.is_dirty():
-        log.insert("Discard set-state, not dirty")
-        return False
+    if not state.is_dirty(): return False
 
     log.insert("Set state to {} with curent state {}, is dirty {}".format(action, state.state, state.is_dirty()))
 
