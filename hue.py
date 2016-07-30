@@ -96,7 +96,19 @@ def url_sonos_set_group_all():
 
 @app.route("/telldus/<int:deviceid>/<int:method>")
 def url_telldus_deviceid_method(deviceid, method):
-    log.insert("telldus event, deviceid:{} method:{}".format(deviceid, method))
+
+    # The door sensor sends several pulses, only accept one every 10s
+    if deviceid == 3 and state.telldus_time_since_command() < 10:
+        log.insert("Throttled telldus event, deviceid:{} method:{} time:{}".format(
+            deviceid, method, state.telldus_time_since_command()))
+        return "Throttled"
+    # For the rest, 2s will do
+    elif state.telldus_time_since_command() < 2:
+        log.insert("Throttled telldus event, deviceid:{} method:{} time:{}".format(
+            deviceid, method, state.telldus_time_since_command()))
+        return "Throttled"
+
+    log.insert("Accepted telldus event, deviceid:{} method:{}".format(deviceid, method))
     state.dirty()
     state.telldus(deviceid, method)
 
@@ -119,10 +131,10 @@ def url_telldus_deviceid_method(deviceid, method):
     # Door Switch
     if deviceid == 3:
         if method == 1: # Door opens
-            if (state.load_state() == "normal"):
-                set_state("off")
-            if (state.load_state() == "off"):
+            if state.load_state() == "off":
                 set_state("normal")
+            else:
+                set_state("off")
         if method == 2: # Door closes
             pass
 
@@ -156,6 +168,7 @@ def url_telldus_deviceid_method(deviceid, method):
                         if match.kitchen_bench(l.name):
                             l.on = False
 
+    state.telldus_record_timestamp()
     return redirect("/switch", code=302)
 
 def sonos_normal():

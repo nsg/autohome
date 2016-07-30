@@ -20,11 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import time
+
 class AutoHomeState:
     state_dirty = True
     state = None
     was_state = None
     telldus_state = {}
+    telldus_last_command = 0
 
     def save_state(self, action):
         fd = open("/var/lib/hue/state", 'w')
@@ -49,3 +52,9 @@ class AutoHomeState:
 
     def telldus(self, deviceid, method):
         self.telldus_state[deviceid] = method
+
+    def telldus_record_timestamp(self):
+        self.telldus_last_command = time.time()
+
+    def telldus_time_since_command(self):
+        return time.time() - self.telldus_last_command
