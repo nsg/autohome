@@ -165,12 +165,15 @@ def sonos_normal():
         if 10 < hour and hour < 21:
             if s.volume > 12:
                 s.volume = 12
+                log.insert("Set volume to 12")
         elif 8 < hour and hour < 23:
             if s.volume > 10:
                 s.volume = 10
+                log.insert("Set volume to 10")
         else:
             if s.volume > 8:
                 s.volume = 8
+                log.insert("Set volume to 8")
 
 def set_state(action):
     if not state.is_dirty(): return False
@@ -254,6 +257,7 @@ def set_state(action):
             l.on = False
         for s in sonos.list_soco():
             s.volume = 0
+            log.insert("Set volume to 0")
 
     state.save_state(action)
     state.dirty(False)
