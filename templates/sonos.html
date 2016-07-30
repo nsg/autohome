@@ -17,6 +17,22 @@
             </form>
         </tr>
         {% endfor %}
+        <tr>
+            <form method="GET" action="/sonos/set">
+            <input type="hidden" name="name" value="all">
+                <td>All</td>
+                <td><input type="text" name="volume" value=""></td>
+                <td></td>
+            </form>
+        </tr>
     </table>
     <a class="btn btn-default btn-lg btn-block" href="/sonos/set/group_all" role="button">Group All Speakers</a>
+    <h2>Playing Media</h2>
+    <table class="table">
+        {% for k,v in active.get_current_track_info().items() %}
+            <tr>
+                <td>{{ k }}</td><td>{{ v }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

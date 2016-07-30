@@ -56,7 +56,7 @@ def url_switch():
 
 @app.route("/sonos")
 def url_sonos():
-    return render_template('sonos.html', speakers=sonos.list_soco())
+    return render_template('sonos.html', speakers=sonos.list_soco(), active=sonos.find_playing_speaker())
 
 @app.route("/log")
 def url_log():
@@ -79,9 +79,14 @@ def url_sonos_set():
     name = request.args.get('name')
     volume = request.args.get('volume')
 
-    for s in sonos.list_soco():
-        if s.player_name == name:
+    if name == "all":
+        for s in sonos.list_soco():
             s.volume = volume
+    else:
+        for s in sonos.list_soco():
+            if s.player_name == name:
+                s.volume = volume
+
     return redirect("/sonos", code=302)
 
 @app.route("/sonos/set/group_all")
