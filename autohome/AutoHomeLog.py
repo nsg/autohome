@@ -20,7 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from AutoHomeHue import AutoHomeHue
-from AutoHomeState import AutoHomeState
-from AutoHomeMatch import AutoHomeMatch
-from AutoHomeLog import AutoHomeLog
+import time
+
+class AutoHomeLog:
+
+    def insert(self, message):
+        fd = open("/var/lib/hue/autohome.log", 'a')
+        fd.write("[{}] {}\n".format(time.strftime("%H:%M:%S"), message))
+        fd.close()
+
+    def load(self):
+        with open("/var/lib/hue/autohome.log") as f:
+            return f.readlines()

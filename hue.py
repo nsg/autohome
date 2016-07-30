@@ -32,6 +32,7 @@ app = Flask(__name__)
 hue = AutoHomeHue()
 state = AutoHomeState()
 match = AutoHomeMatch()
+log = AutoHomeLog()
 
 @app.route("/")
 def url_index():
@@ -50,6 +51,10 @@ def url_switch():
     ]
     return render_template('switch.html', switches=switches)
 
+@app.route("/log")
+def url_log():
+    return render_template('log.html', logs=log.load())
+
 @app.route("/set-state")
 def url_set_state():
     states = [ "Normal", "Movie", "Bed", "Cozy", "Off" ]
@@ -59,10 +64,12 @@ def url_set_state():
 def url_set_state_action(action="normal"):
     state.dirty()
     set_state(action)
+    log.insert("set-stage called, set action to {}".format(action))
     return redirect("/set-state", code=302)
 
 @app.route("/telldus/<int:deviceid>/<int:method>")
 def url_telldus_deviceid_method(deviceid, method):
+    log.insert("telldus event, deviceid:{} method:{}".format(deviceid, method))
     state.dirty()
 
     # Wall Switch - Button 1
@@ -92,7 +99,9 @@ def url_telldus_deviceid_method(deviceid, method):
     return redirect("/switch", code=302)
 
 def set_state(action):
-    if not state.is_dirty(): return False
+    if not state.is_dirty():
+        log.insert("Discard set-state, not dirty")
+        return False
 
     hour = datetime.datetime.now().hour
 
@@ -168,6 +177,7 @@ def set_state(action):
 
     state.save_state(action)
     state.dirty()
+    log.insert("State was set to {}".format(action))
     return True
 
 @app.route("/api/hue/<int:lamp_id>/state/<state>")
@@ -192,8 +202,10 @@ def tick():
 
     # Restore the state, if it's dirty
     if set_state(state.load_state()):
-        msg.append("Restore cached state\n")
+        msg.append("State was not dirty, ignore\n")
 
+    for m in msg:
+        log.insert(m)
     return "\n".join(msg)
 
 if __name__ == "__main__":
