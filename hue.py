@@ -47,7 +47,8 @@ def url_switch():
     switches = [
         {"name": "Wall 1", "id": 1 },
         {"name": "Wall 2", "id": 2 },
-        {"name": "Door",   "id": 3 }
+        {"name": "Door",   "id": 3 },
+        {"name": "Kitcken Movement",   "id": 4 }
     ]
     return render_template('switch.html', switches=switches)
 
@@ -72,6 +73,8 @@ def url_telldus_deviceid_method(deviceid, method):
     log.insert("telldus event, deviceid:{} method:{}".format(deviceid, method))
     state.dirty()
 
+    cur_state = state.load_state()
+
     # Wall Switch - Button 1
     if deviceid == 1:
         if method == 1:
@@ -95,6 +98,36 @@ def url_telldus_deviceid_method(deviceid, method):
                 set_state("normal")
         if method == 2: # Door closes
             pass
+
+    # Kitchen Movement
+    if deviceid == 4:
+        for l in hue.lights():
+            if match.kitchen(l.name):
+                if cur_state == "normal":
+                    if method == 1:
+                        if match.lamp_kitchen(l.name):
+                            hue.brightness(l, 201)
+                        if match.kitchen_bench(l.name):
+                            hue.brightness(l, 201)
+                    if method == 2:
+                        if match.lamp_kitchen(l.name):
+                            hue.brightness(l, 150)
+                        if match.kitchen_bench(l.name):
+                            hue.brightness(l, 50)
+                elif cur_state == "cozy":
+                    if method == 1:
+                        if match.kitchen_bench(l.name):
+                            hue.brightness(l, 90)
+                    if method == 2:
+                        if match.kitchen_bench(l.name):
+                            hue.brightness(l, 50)
+                elif cur_state == "off":
+                    if method == 1:
+                        if match.kitchen_bench(l.name):
+                            hue.brightness(l, 50)
+                    if method == 2:
+                        if match.kitchen_bench(l.name):
+                            l.on = False
 
     return redirect("/switch", code=302)
 
