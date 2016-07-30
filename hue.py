@@ -52,7 +52,7 @@ def url_switch():
         {"name": "Door Sensor",             "id": 3 },
         {"name": "Kitcken Movement Sensor", "id": 4 }
     ]
-    return render_template('switch.html', switches=switches)
+    return render_template('switch.html', switches=switches, telldus=state.telldus_state)
 
 @app.route("/sonos")
 def url_sonos():
@@ -93,6 +93,7 @@ def url_sonos_set_group_all():
 def url_telldus_deviceid_method(deviceid, method):
     log.insert("telldus event, deviceid:{} method:{}".format(deviceid, method))
     state.dirty()
+    state.telldus(deviceid, method)
 
     cur_state = state.load_state()
 

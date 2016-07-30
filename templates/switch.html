@@ -11,7 +11,10 @@
         <tr>
             <td>{{ switch.name }}</td>
             <td>{{ switch.id }}</td>
-            <td><a class="btn btn-default btn-sm" href="/telldus/{{ switch.id }}/1" role="button">1</a><a class="btn btn-default btn-sm" href="/telldus/{{ switch.id }}/2" role="button">2</a></td>
+            <td>
+                <a class="btn btn-{% if telldus[switch.id] is defined and telldus[switch.id] == 1 %}primary{% else %}default{% endif %} btn-sm" href="/telldus/{{ switch.id }}/1" role="button">1</a>
+                <a class="btn btn-{% if telldus[switch.id] is defined and telldus[switch.id] == 2 %}primary{% else %}default{% endif %} btn-sm" href="/telldus/{{ switch.id }}/2" role="button">2</a>
+            </td>
         </tr>
         {% endfor %}
     </table>

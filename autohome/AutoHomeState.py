@@ -24,6 +24,7 @@ class AutoHomeState:
     state_dirty = True
     state = None
     was_state = None
+    telldus_state = {}
 
     def save_state(self, action):
         fd = open("/var/lib/hue/state", 'w')
@@ -45,3 +46,6 @@ class AutoHomeState:
 
     def is_dirty(self):
         return self.state_dirty
+
+    def telldus(self, deviceid, method):
+        self.telldus_state[deviceid] = method
