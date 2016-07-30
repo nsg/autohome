@@ -40,8 +40,8 @@ class AutoHomeState:
         self.state = r
         return r
 
-    def dirty(self):
-        state_dirty = True
+    def dirty(self, yes=True):
+        self.state_dirty = yes
 
     def is_dirty(self):
         return self.state_dirty

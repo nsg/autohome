@@ -103,6 +103,8 @@ def set_state(action):
         log.insert("Discard set-state, not dirty")
         return False
 
+    log.insert("Set state to {} with curent state {}, is dirty {}".format(action, state.state, state.is_dirty()))
+
     hour = datetime.datetime.now().hour
 
     if action == "normal":
@@ -176,7 +178,7 @@ def set_state(action):
             l.on = False
 
     state.save_state(action)
-    state.dirty()
+    state.dirty(False)
     log.insert("State was set to {}".format(action))
     return True
 
