@@ -24,3 +24,4 @@ from AutoHomeHue import AutoHomeHue
 from AutoHomeState import AutoHomeState
 from AutoHomeMatch import AutoHomeMatch
 from AutoHomeLog import AutoHomeLog
+from AutoHomeSonos import AutoHomeSonos

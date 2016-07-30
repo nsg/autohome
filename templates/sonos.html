@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block container %}
+    <h1>Sonos</h1>
+    <table class="table">
+        <tr>
+            <th>Speaker</th>
+            <th>Volume</th>
+            <th>State</th>
+        </tr>
+        {% for speaker in speakers %}
+        <tr>
+            <form method="GET" action="/sonos/set">
+            <input type="hidden" name="name" value="{{ speaker.player_name }}">
+                <td>{{ speaker.player_name }}</td>
+                <td><input type="text" name="volume" value="{{ speaker.volume }}"></td>
+                <td>{{ speaker.get_current_transport_info()['current_transport_state'] }}</td>
+            </form>
+        </tr>
+        {% endfor %}
+    </table>
+    <a class="btn btn-default btn-lg btn-block" href="/sonos/set/group_all" role="button">Group All Speakers</a>
+{% endblock %}

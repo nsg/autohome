@@ -26,6 +26,7 @@ import logging, datetime, time, os
 from flask import Flask
 from flask import render_template
 from flask import redirect
+from flask import request
 
 logging.basicConfig()
 app = Flask(__name__)
@@ -33,6 +34,7 @@ hue = AutoHomeHue()
 state = AutoHomeState()
 match = AutoHomeMatch()
 log = AutoHomeLog()
+sonos = AutoHomeSonos()
 
 @app.route("/")
 def url_index():
@@ -52,6 +54,10 @@ def url_switch():
     ]
     return render_template('switch.html', switches=switches)
 
+@app.route("/sonos")
+def url_sonos():
+    return render_template('sonos.html', speakers=sonos.list_soco())
+
 @app.route("/log")
 def url_log():
     return render_template('log.html', logs=log.load())
@@ -67,6 +73,21 @@ def url_set_state_action(action="normal"):
     set_state(action)
     log.insert("set-stage called, set action to {}".format(action))
     return redirect("/set-state", code=302)
+
+@app.route("/sonos/set")
+def url_sonos_set():
+    name = request.args.get('name')
+    volume = request.args.get('volume')
+
+    for s in sonos.list_soco():
+        if s.player_name == name:
+            s.volume = volume
+    return redirect("/sonos", code=302)
+
+@app.route("/sonos/set/group_all")
+def url_sonos_set_group_all():
+    sonos.group_speakers()
+    return redirect("/sonos", code=302)
 
 @app.route("/telldus/<int:deviceid>/<int:method>")
 def url_telldus_deviceid_method(deviceid, method):
