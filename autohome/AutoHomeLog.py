@@ -25,7 +25,11 @@ import time
 class AutoHomeLog:
 
     def insert(self, message):
-        fd = open("/var/lib/hue/autohome.log", 'a')
+        data = self.load()
+
+        fd = open("/var/lib/hue/autohome.log", 'w')
+        for l in data[(len(data)-100):len(data)]:
+                fd.write(l)
         fd.write("[{}] {}\n".format(time.strftime("%H:%M:%S"), message))
         fd.close()
 
