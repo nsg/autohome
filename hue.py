@@ -152,6 +152,17 @@ def url_telldus_deviceid_method(deviceid, method):
 
     return redirect("/switch", code=302)
 
+def sonos_normal():
+    hour = datetime.datetime.now().hour
+
+    for s in sonos.list_soco():
+        if 10 < hour and hour < 21:
+            s.volume = 12
+        elif 8 < hour and hour < 23:
+            s.volume = 10
+        else:
+            s.volume = 8
+
 def set_state(action):
     if not state.is_dirty():
         log.insert("Discard set-state, not dirty")
@@ -186,6 +197,8 @@ def set_state(action):
             if match.bedroom(l.name):
                 l.on = False
 
+        sonos_normal()
+
     if action == "movie":
         for l in hue.lights():
             if match.hall(l.name):
@@ -214,6 +227,8 @@ def set_state(action):
             if match.lamp_kitchen(l.name):
                 hue.brightness(l, 90)
 
+        sonos_normal()
+
     if action == "bed":
         for l in hue.lights():
             if match.hall(l.name):
@@ -230,6 +245,8 @@ def set_state(action):
     if action == "off":
         for l in hue.lights():
             l.on = False
+        for s in sonos.list_soco():
+            s.volume = 0
 
     state.save_state(action)
     state.dirty(False)
