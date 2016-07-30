@@ -41,7 +41,7 @@ class AutoHomeHue:
     def lock_file(self, lamp):
         open("/var/lib/hue/locks/{}".format(lamp.light_id), 'a').close()
 
-    def brightness(self, lamp, value, time=1):
+    def brightness(self, lamp, value, time=100):
         lamp.on = True
         self.hue.set_light(lamp.light_id, 'bri', value, transitiontime=time)
 

@@ -99,15 +99,15 @@ def set_state(action):
     if action == "normal":
         for l in hue.lights():
             if match.hall(l.name):
-                hue.brightness(l, 150, 100)
+                hue.brightness(l, 150)
             if match.vardagsrum(l.name):
-                hue.brightness(l, 201, 100)
+                hue.brightness(l, 201)
 
             if match.lamp_kitchen(l.name):
-                hue.brightness(l, 201, 100)
+                hue.brightness(l, 201)
             if match.kitchen_bench(l.name):
                 if 6 > hour or hour > 18:
-                    hue.brightness(l, 201, 100)
+                    hue.brightness(l, 201)
                 else:
                     l.on = False
 
@@ -115,7 +115,7 @@ def set_state(action):
                 l.on = False
             if match.lamp_soffa_large(l.name):
                 if 6 > hour or hour > 18:
-                    hue.brightness(l, 201, 100)
+                    hue.brightness(l, 201)
                 else:
                     l.on = False
             if match.bedroom(l.name):
@@ -124,30 +124,30 @@ def set_state(action):
     if action == "movie":
         for l in hue.lights():
             if match.hall(l.name):
-                hue.brightness(l, 50, 100)
+                hue.brightness(l, 50)
             if match.vardagsrum(l.name):
-                hue.brightness(l, 50, 100)
+                hue.brightness(l, 50)
 
             if match.lamp_soffa(l.name):
-                hue.brightness(l, 250, 100)
+                hue.brightness(l, 250)
             if match.lamp_soffa_large(l.name):
-                hue.brightness(l, 50, 100)
+                hue.brightness(l, 50)
 
     if action == "cozy":
         for l in hue.lights():
             if match.hall(l.name):
-                hue.brightness(l, 50, 100)
+                hue.brightness(l, 50)
             if match.vardagsrum(l.name):
-                hue.brightness(l, 140, 100)
+                hue.brightness(l, 140)
 
             if match.lamp_soffa(l.name):
                 l.on = False
             if match.lamp_soffa_large(l.name):
-                hue.brightness(l, 150, 100)
+                hue.brightness(l, 150)
             if match.kitchen_bench(l.name):
-                hue.brightness(l, 50, 100)
+                hue.brightness(l, 50)
             if match.lamp_kitchen(l.name):
-                hue.brightness(l, 90, 100)
+                hue.brightness(l, 90)
 
     if action == "bed":
         for l in hue.lights():
@@ -160,7 +160,7 @@ def set_state(action):
             if match.kitchen(l.name):
                 l.on = False
             if match.bedroom(l.name):
-                hue.brightness(l, 150, 100)
+                hue.brightness(l, 150)
 
     if action == "off":
         for l in hue.lights():
