@@ -24,19 +24,19 @@ from __future__ import print_function
 import argparse
 import soco
 import re
-import os
+import time
 
 class AutoHomeSonos():
 
     def list_soco(self):
-        r = list(soco.discover())
-
         # Hack!
-        if not r:
-            os.sleep(2)
-            r = list(soco.discover())
+        r = None
+        while not r:
+            r = soco.discover()
+            if not r:
+                time.sleep(1)
 
-        return r
+        return list(r)
 
     def get_soco(self):
         return self.list_soco()[0]
