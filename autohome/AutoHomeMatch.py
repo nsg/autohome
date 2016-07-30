@@ -20,6 +20,45 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from AutoHomeHue import AutoHomeHue
-from AutoHomeState import AutoHomeState
-from AutoHomeMatch import AutoHomeMatch
+import re
+
+class AutoHomeMatch:
+
+    def vardagsrum(self, lamp_name):
+        if re.match(r'^Vardagsrum', lamp_name):
+            return True
+        return False
+
+    def hall(self, lamp_name):
+        if re.match(r'^Hall', lamp_name):
+            return True
+        return False
+
+    def bedroom(self, lamp_name):
+        if re.match(r'^Bedroom', lamp_name):
+            return True
+        return False
+
+    def kitchen(self, lamp_name):
+        if re.match(r'^Kitchen', lamp_name):
+            return True
+        return False
+
+    def soffa(self, lamp_name):
+        if re.match(r'^Soffa', lamp_name):
+            return True
+        return False
+
+    def kitchen_bench(self, lamp_name):
+        if re.match(r'^Kitchen Bench', lamp_name):
+            return True
+        return False
+
+    def lamp_soffa(self, lamp_name):
+        return lamp_name == "Soffa"
+
+    def lamp_soffa_large(self, lamp_name):
+        return lamp_name == "Soffa Large"
+
+    def lamp_kitchen(self, lamp_name):
+        return lamp_name == "Kitchen"

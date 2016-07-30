@@ -26,12 +26,12 @@ import logging, datetime, time, os
 from flask import Flask
 from flask import render_template
 from flask import redirect
-import re
 
 logging.basicConfig()
 app = Flask(__name__)
 hue = AutoHomeHue()
 state = AutoHomeState()
+match = AutoHomeMatch()
 
 @app.route("/")
 def url_index():
@@ -98,68 +98,68 @@ def set_state(action):
 
     if action == "normal":
         for l in hue.lights():
-            if re.match(r'^Hall spot', l.name):
+            if match.hall(l.name):
                 hue.brightness(l, 150, 100)
-            if re.match(r'^Vardagsrum', l.name):
+            if match.vardagsrum(l.name):
                 hue.brightness(l, 201, 100)
 
-            if l.name == "Kitchen":
+            if match.lamp_kitchen(l.name):
                 hue.brightness(l, 201, 100)
-            if re.match(r'^Kitchen Bench', l.name):
+            if match.kitchen_bench(l.name):
                 if 6 > hour or hour > 18:
                     hue.brightness(l, 201, 100)
                 else:
                     l.on = False
 
-            if l.name == "Soffa":
+            if match.lamp_soffa(l.name):
                 l.on = False
-            if l.name == "Soffa Large":
+            if match.lamp_soffa_large(l.name):
                 if 6 > hour or hour > 18:
                     hue.brightness(l, 201, 100)
                 else:
                     l.on = False
-            if l.name == "Bedroom":
+            if match.bedroom(l.name):
                 l.on = False
 
     if action == "movie":
         for l in hue.lights():
-            if re.match(r'^Hall spot', l.name):
+            if match.hall(l.name):
                 hue.brightness(l, 50, 100)
-            if re.match(r'^Vardagsrum', l.name):
+            if match.vardagsrum(l.name):
                 hue.brightness(l, 50, 100)
 
-            if l.name == "Soffa":
+            if match.lamp_soffa(l.name):
                 hue.brightness(l, 250, 100)
-            if l.name == "Soffa Large":
+            if match.lamp_soffa_large(l.name):
                 hue.brightness(l, 50, 100)
 
     if action == "cozy":
         for l in hue.lights():
-            if re.match(r'^Hall spot', l.name):
+            if match.hall(l.name):
                 hue.brightness(l, 50, 100)
-            if re.match(r'^Vardagsrum', l.name):
+            if match.vardagsrum(l.name):
                 hue.brightness(l, 140, 100)
 
-            if l.name == "Soffa":
+            if match.lamp_soffa(l.name):
                 l.on = False
-            if l.name == "Soffa Large":
+            if match.lamp_soffa_large(l.name):
                 hue.brightness(l, 150, 100)
-            if re.match(r'^Kitchen Bench', l.name):
+            if match.kitchen_bench(l.name):
                 hue.brightness(l, 50, 100)
-            if l.name == "Kitchen":
+            if match.lamp_kitchen(l.name):
                 hue.brightness(l, 90, 100)
 
     if action == "bed":
         for l in hue.lights():
-            if re.match(r'^Hall spot', l.name):
+            if match.hall(l.name):
                 l.on = False
-            if re.match(r'^Vardagsrum', l.name):
+            if match.vardagsrum(l.name):
                 l.on = False
-            if re.match(r'^Soffa', l.name):
+            if match.soffa(l.name):
                 l.on = False
-            if re.match(r'^Kitchen', l.name):
+            if match.kitchen(l.name):
                 l.on = False
-            if l.name == "Bedroom":
+            if match.bedroom(l.name):
                 hue.brightness(l, 150, 100)
 
     if action == "off":
