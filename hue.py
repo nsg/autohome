@@ -47,10 +47,10 @@ def url_hue():
 @app.route("/switch")
 def url_switch():
     switches = [
-        {"name": "Wall 1", "id": 1 },
-        {"name": "Wall 2", "id": 2 },
-        {"name": "Door",   "id": 3 },
-        {"name": "Kitcken Movement",   "id": 4 }
+        {"name": "Wall Switch - Button 1",  "id": 1 },
+        {"name": "Wall Switch - Button 2",  "id": 2 },
+        {"name": "Door Sensor",             "id": 3 },
+        {"name": "Kitcken Movement Sensor", "id": 4 }
     ]
     return render_template('switch.html', switches=switches)
 
