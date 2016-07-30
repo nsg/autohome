@@ -7,7 +7,7 @@
             <th>Volume</th>
             <th>State</th>
         </tr>
-        {% for speaker in speakers %}
+        {% for speaker in speakers|sort %}
         <tr>
             <form method="GET" action="/sonos/set">
             <input type="hidden" name="name" value="{{ speaker.player_name }}">
@@ -27,12 +27,4 @@
         </tr>
     </table>
     <a class="btn btn-default btn-lg btn-block" href="/sonos/set/group_all" role="button">Group All Speakers</a>
-    <h2>Playing Media</h2>
-    <table class="table">
-        {% for k,v in active.get_current_track_info().items() %}
-            <tr>
-                <td>{{ k }}</td><td>{{ v }}</td>
-            </tr>
-        {% endfor %}
-    </table>
 {% endblock %}

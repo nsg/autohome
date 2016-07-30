@@ -56,7 +56,7 @@ def url_switch():
 
 @app.route("/sonos")
 def url_sonos():
-    return render_template('sonos.html', speakers=sonos.list_soco(), active=sonos.find_playing_speaker())
+    return render_template('sonos.html', speakers=sonos.list_soco())
 
 @app.route("/log")
 def url_log():

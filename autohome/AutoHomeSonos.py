@@ -29,14 +29,11 @@ import time
 class AutoHomeSonos():
 
     def list_soco(self):
-        # Hack!
-        r = None
-        while not r:
-            r = soco.discover()
-            if not r:
-                time.sleep(1)
-
-        return list(r)
+        try:
+            r = list(soco.discover())
+            return r
+        except NoneType:
+            return []
 
     def get_soco(self):
         return self.list_soco()[0]
