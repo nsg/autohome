@@ -109,13 +109,13 @@ def url_telldus_deviceid_method(deviceid, method):
         return "Throttled"
 
     log.insert("Accepted telldus event, deviceid:{} method:{}".format(deviceid, method))
-    state.dirty()
     state.telldus(deviceid, method)
 
     cur_state = state.load_state()
 
     # Wall Switch - Button 1
     if deviceid == 1:
+        state.dirty()
         if method == 1:
             set_state("normal")
         else:
@@ -123,6 +123,7 @@ def url_telldus_deviceid_method(deviceid, method):
 
     # Wall Switch - Button 2
     if deviceid == 2:
+        state.dirty()
         if method == 1:
             pass
         else:
@@ -130,6 +131,7 @@ def url_telldus_deviceid_method(deviceid, method):
 
     # Door Switch
     if deviceid == 3:
+        state.dirty()
         if method == 1: # Door opens
             if state.load_state() == "off":
                 set_state("normal")
