@@ -181,11 +181,7 @@ def sonos_normal():
     hour = datetime.datetime.now().hour
 
     for s in sonos.list_soco():
-        if 10 < hour and hour < 21:
-            if s.volume > 12:
-                s.volume = 12
-                log.insert("Set volume to 12")
-        elif 8 < hour and hour < 23:
+        if 8 < hour and hour < 23:
             if s.volume > 10:
                 s.volume = 10
                 log.insert("Set volume to 10")
