@@ -167,6 +167,10 @@ def url_telldus_deviceid_method(deviceid, method):
                     if method == 2:
                         if match.kitchen_bench(l.name):
                             l.on = False
+            if match.bedroom(l.name):
+                if l.on and method == 2:
+                    if cur_state == "normal" or cur_state == "cozy":
+                        l.on = False
 
     state.telldus_record_timestamp()
     return redirect("/switch", code=302)
