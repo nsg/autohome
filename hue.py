@@ -125,7 +125,7 @@ def url_telldus_deviceid_method(deviceid, method):
     if deviceid == 2:
         state.dirty()
         if method == 1:
-            pass
+            set_state("cozy")
         else:
             set_state("bed")
 
