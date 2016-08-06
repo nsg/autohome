@@ -1,0 +1,12 @@
+[Unit]
+Description=PulseAudio DLNA Daemon
+
+[Service]
+Type=simple
+User=sonos
+Group=sonos
+PrivateTmp=true
+ExecStart=/bin/bash -c '/usr/bin/dbus-run-session /usr/bin/pulseaudio-dlna --codec=wav --auto-reconnect'
+
+[Install]
+WantedBy=multi-user.target

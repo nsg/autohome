@@ -1,0 +1,13 @@
+[Unit]
+Description=PulseAudio Daemon
+
+[Service]
+Type=forking
+User=pulse
+Group=pulse
+PrivateTmp=true
+ProtectHome=true
+ExecStart=/usr/bin/pulseaudio -D --disallow-exit
+
+[Install]
+WantedBy=multi-user.target
