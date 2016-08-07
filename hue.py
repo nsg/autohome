@@ -35,6 +35,7 @@ state = AutoHomeState()
 match = AutoHomeMatch()
 log = AutoHomeLog()
 sonos = AutoHomeSonos()
+yrno = AutoHomeYrNo()
 
 @app.route("/")
 def url_index():
@@ -64,7 +65,7 @@ def url_log():
 
 @app.route("/set-state")
 def url_set_state():
-    states = [ "Normal", "Movie", "Bed", "Cozy", "Off" ]
+    states = [ "Normal", "Movie", "Cozy", "Bed", "Morning", "Off" ]
     return render_template('set-state.html', active_state=state.load_state(), states=states)
 
 @app.route("/set-state/<action>")
@@ -265,11 +266,46 @@ def set_state(action):
             if match.kitchen(l.name):
                 l.on = False
             if match.bedroom(l.name):
-                hue.brightness(l, 150)
+                hue.brightness(l, 120, 1)   # Set it quite bright
+                hue.brightness(l, 60, 3000) # Over 5 minutes, make it quite dark
+
+    if action == "morning":
+        log.insert("Load weather data from yr.no")
+        yrno.load() # Load fresh weather data
+        for l in hue.lights():
+            if match.bedroom(l.name):
+                hue.brightness(l, 254, 9000) # Over 15 minutes, make it bright
+            if l.name == "Hall spot 1":
+                hue.brightness(l, 254)
+            if l.name == "Hall spot 2":
+                t = yrno.get_temperature(yrno.find_next_morning())
+                p = yrno.get_precipitation(yrno.find_next_morning())
+                if float(p) > 0.5:
+                    hue.color(l, hue=46920) # blue
+                    log.insert("Set hue blue b/c forcast for this morning is rain")
+                else:
+                    hue_color = 12750 - (12750/30) * int(t)
+                    hue.color(l, hue=hue_color + 1)
+                    log.insert("Set hue to {} b/c the forcast for this morning is {}C".format(hue_color, t))
+                hue.lock(l)
+            if l.name == "Hall spot 3":
+                t = yrno.get_temperature(yrno.find_next_evening())
+                p = yrno.get_precipitation(yrno.find_next_evening())
+                p = 0.7
+                if float(p) > 0.5:
+                    hue.color(l, hue=46920) # blue
+                    log.insert("Set hue to blue b/c the forcast for this evening is rain")
+                else:
+                    hue_color = 12750 - (12750/30) * int(t)
+                    hue.color(l, hue=hue_color + 1)
+                    log.insert("Set hue to {} b/c the forcast for this evening is {}C".format(hue_color, t))
+                hue.lock(l)
 
     if action == "off":
         for l in hue.lights():
             l.on = False
+            if (hue.is_locked(l)):
+                hue.unlock(l)
         for s in sonos.list_soco():
             s.volume = 0
             log.insert("Set volume to 0")

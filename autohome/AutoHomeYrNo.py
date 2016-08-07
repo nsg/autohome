@@ -20,9 +20,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from AutoHomeHue import AutoHomeHue
-from AutoHomeState import AutoHomeState
-from AutoHomeMatch import AutoHomeMatch
-from AutoHomeLog import AutoHomeLog
-from AutoHomeSonos import AutoHomeSonos
-from AutoHomeYrNo import AutoHomeYrNo
+import xml.etree.ElementTree as ET
+import urllib2
+
+class AutoHomeYrNo:
+    url = "http://www.yr.no/place/Sweden/Stockholm/Stockholm/forecast.xml"
+    root = None
+
+    def load(self):
+        xml_string = urllib2.urlopen(self.url).read()
+        self.root = ET.fromstring(xml_string)
+
+    def find_next_morning(self):
+        for forecast in self.root.iter('forecast'):
+            for time in forecast.iter('time'):
+                if time.attrib['period'] == '1': # From 06 - 12
+                    return time
+
+    def find_next_evening(self):
+        for forecast in self.root.iter('forecast'):
+            for time in forecast.iter('time'):
+                if time.attrib['period'] == '3': # From 18 - 00
+                    return time
+
+    def get_precipitation(self, xml):
+        for c in xml:
+            if c.tag == 'precipitation':
+                return c.attrib['value']
+
+    def get_temperature(self, xml):
+        for c in xml:
+            if c.tag == 'temperature':
+                return c.attrib['value']
+

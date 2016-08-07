@@ -38,12 +38,24 @@ class AutoHomeHue:
     def is_locked(self, lamp):
         return os.path.isfile("/var/lib/hue/locks/{}".format(lamp.light_id))
 
-    def lock_file(self, lamp):
+    def lock(self, lamp):
         open("/var/lib/hue/locks/{}".format(lamp.light_id), 'a').close()
+
+    def unlock(self, lamp):
+        os.remove("/var/lib/hue/locks/{}".format(lamp.light_id))
 
     def brightness(self, lamp, value, time=100):
         lamp.on = True
         self.hue.set_light(lamp.light_id, 'bri', value, transitiontime=time)
+
+    def color(self, lamp, hue=None, sat=None, xy=None):
+        lamp.on = True
+        if hue:
+            lamp.hue = hue
+        if sat:
+            lamp.sat = sat
+        if xy:
+            lamp.xy = xy
 
     def time_based_white(self, light):
         if not self.hue.get_light(light.name, 'on'): return False
