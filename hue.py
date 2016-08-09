@@ -291,7 +291,6 @@ def set_state(action):
             if l.name == "Hall spot 3":
                 t = yrno.get_temperature(yrno.find_next_evening())
                 p = yrno.get_precipitation(yrno.find_next_evening())
-                p = 0.7
                 if float(p) > 0.5:
                     hue.color(l, hue=46920) # blue
                     log.insert("Set hue to blue b/c the forcast for this evening is rain")
