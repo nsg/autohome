@@ -6,6 +6,8 @@
             <th>Speaker</th>
             <th>Volume</th>
             <th>State</th>
+            <th>Net</th>
+            <th>Wifi</th>
         </tr>
         {% for speaker in speakers|sort %}
         <tr>
@@ -14,6 +16,14 @@
                 <td>{{ speaker.player_name }}</td>
                 <td><input type="text" name="volume" value="{{ speaker.volume }}"></td>
                 <td>{{ speaker.get_current_transport_info()['current_transport_state'] }}</td>
+                <td>
+                    <a href="http://{{ speaker.ip_address }}:1400/status/ifconfig">ifconfig</a>
+                    <a href="http://{{ speaker.ip_address }}:1400/status/route">route</a>
+                </td>
+                <td>
+                    <a href="http://{{ speaker.ip_address }}:1400/wifictrl?wifi=on">On</a>
+                    <a href="http://{{ speaker.ip_address }}:1400/wifictrl?wifi=off">Off</a>
+                </td>
             </form>
         </tr>
         {% endfor %}
