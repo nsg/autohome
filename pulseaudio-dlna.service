@@ -7,6 +7,8 @@ User=sonos
 Group=sonos
 PrivateTmp=true
 ExecStart=/bin/bash -c '/usr/bin/dbus-run-session /usr/bin/pulseaudio-dlna --codec=wav --auto-reconnect'
+RestartSec=15
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
