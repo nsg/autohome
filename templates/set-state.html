@@ -5,4 +5,17 @@
     {% for state in states %}
     <a class="btn btn-{% if active_state == state|lower %}primary{% else %}default{% endif %} btn-lg btn-block" href="/set-state/{{ state|lower }}" role="button">{{ state }}</a>
     {% endfor %}
+    <h1>Alexa State</h1>
+    <table class="table">
+        <tr class="active">
+            <th>State</th>
+            <th>Volume</th>
+            <th>Volume Room</th>
+        </tr>
+        <tr>
+            <td>{{ alexa_states['state']|capitalize }}</td>
+            <td>{{ alexa_states['volume'] }}</td>
+            <td>{{ alexa_states['volume_room'] }}</td>
+        </tr>
+    </table>
 {% endblock %}

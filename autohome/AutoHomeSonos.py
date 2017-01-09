@@ -32,7 +32,7 @@ class AutoHomeSonos():
         try:
             r = list(soco.discover())
             return r
-        except NoneType:
+        except TypeError:
             return []
 
     def get_soco(self):

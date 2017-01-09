@@ -70,7 +70,7 @@ class AutoHomeHue:
 
         ct = 154 + ((500-154)/24) * hour
 
-        if (light.colortemp != ct):
+        if light.light_id != 13 and light.colortemp != ct:
             self.hue.set_light(light.name, 'ct', ct)
             return True
 

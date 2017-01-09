@@ -28,6 +28,8 @@ from flask import render_template
 from flask import redirect
 from flask import request
 
+import thread
+
 logging.basicConfig()
 app = Flask(__name__)
 hue = AutoHomeHue()
@@ -37,6 +39,24 @@ log = AutoHomeLog()
 sonos = AutoHomeSonos()
 yrno = AutoHomeYrNo()
 
+def alexa_poll_thread(threadName):
+    log.insert("Start Alexa Poll Thread")
+    while True:
+        time.sleep(1)
+        alexa = state.alexa_read_command()
+
+        if alexa['state']:
+            log.insert("State change from Alexa")
+            set_state(alexa['state'])
+
+        if alexa['volume']:
+            if alexa['volume_room']:
+                log.insert("Volume change from Alexa in {} to {}".format(alexa['volume_room'], alexa['volume']))
+                sonos_set_volume(alexa['volume_room'], alexa['volume'])
+            else:
+                log.insert("Volume change from Alexa in all rooms to {}".format(alexa['volume']))
+                sonos_set_volume("all", alexa['volume'])
+
 @app.route("/")
 def url_index():
     return render_template('index.html')
@@ -44,6 +64,27 @@ def url_index():
 @app.route("/hue")
 def url_hue():
     return render_template('hue-status.html', lamps=hue.lights())
+
+@app.route("/set-hue/<lamp>/<h>/<s>/<l>")
+def url_set_hue(lamp, h, s, l):
+    log.insert("Hue update - Lamp {} set to hsl {} {} {}".format(lamp, h, s, l))
+    for lmp in hue.lights():
+        if lmp.name == lamp:
+            hue.color(lamp=lmp, hue=h, sat=s)
+    return ""
+
+@app.route("/set-hue/<lamp>/lock/<int:state>")
+def url_set_hue_lock(lamp, state):
+    for lmp in hue.lights():
+        if lmp.name == lamp:
+            if state == 1:
+                log.insert("Hue update - Lamp {} locked".format(lamp))
+                hue.lock(lmp)
+            elif state == 0:
+                log.insert("Hue update - Lamp {} unlocked".format(lamp))
+                hue.unlock(lmp)
+
+    return ""
 
 @app.route("/switch")
 def url_switch():
@@ -66,7 +107,10 @@ def url_log():
 @app.route("/set-state")
 def url_set_state():
     states = [ "Normal", "Movie", "Cozy", "Bed", "Morning", "Off" ]
-    return render_template('set-state.html', active_state=state.load_state(), states=states)
+    return render_template('set-state.html',
+            active_state=state.load_state(),
+            states=states,
+            alexa_states=state.alexa_get())
 
 @app.route("/set-state/<action>")
 def url_set_state_action(action="normal"):
@@ -75,19 +119,20 @@ def url_set_state_action(action="normal"):
     log.insert("set-stage called, set action to {}".format(action))
     return redirect("/set-state", code=302)
 
-@app.route("/sonos/set")
-def url_sonos_set():
-    name = request.args.get('name')
-    volume = request.args.get('volume')
-
+def sonos_set_volume(name, volume):
     if name == "all":
         for s in sonos.list_soco():
             s.volume = volume
     else:
         for s in sonos.list_soco():
-            if s.player_name == name:
+            if s.player_name.lower() == name.lower():
                 s.volume = volume
 
+@app.route("/sonos/set")
+def url_sonos_set():
+    name = request.args.get('name')
+    volume = request.args.get('volume')
+    sonos_set_volume(name, volume)
     return redirect("/sonos", code=302)
 
 @app.route("/sonos/set/group_all")
@@ -197,6 +242,7 @@ def set_state(action):
     log.insert("Set state to {} with curent state {}, is dirty {}".format(action, state.state, state.is_dirty()))
 
     hour = datetime.datetime.now().hour
+    month = datetime.datetime.now().month
 
     if action == "normal":
         for l in hue.lights():
@@ -208,7 +254,7 @@ def set_state(action):
             if match.lamp_kitchen(l.name):
                 hue.brightness(l, 201)
             if match.kitchen_bench(l.name):
-                if 6 > hour or hour > 18:
+                if 6 > hour or hour > 18 or month > 10 or month < 4:
                     hue.brightness(l, 201)
                 else:
                     l.on = False
@@ -216,7 +262,7 @@ def set_state(action):
             if match.lamp_soffa(l.name):
                 l.on = False
             if match.lamp_soffa_large(l.name):
-                if 6 > hour or hour > 18:
+                if 6 > hour or hour > 18 or month > 10 or month < 4:
                     hue.brightness(l, 201)
                 else:
                     l.on = False
@@ -343,4 +389,5 @@ def tick():
     return "\n".join(msg)
 
 if __name__ == "__main__":
+    thread.start_new_thread(alexa_poll_thread,("Alexa_Poll",))
     app.run(host='0.0.0.0', debug=True)
