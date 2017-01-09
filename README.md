@@ -5,7 +5,7 @@ This is a collection of scripts and things that I use to control my home. Some a
 *Warning: Most of the code here is written in a sense of fast prototyping and trying things out, it's possible that I will clean things up in the future, time will tell...*
 
 ## hue.py
-Used to control my Hue lights, this script runs all the time and manages the state.
+The main script for the Flask app, and control API:s for Hue, Sonos, switches and Alexa (and more).
 
 ## hue.sh
 Startup script deployed to a container on my home server.
