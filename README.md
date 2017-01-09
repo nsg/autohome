@@ -2,6 +2,8 @@
 
 This is a collection of scripts and things that I use to control my home. Some assembly is needed and understanding of the tools are needed.
 
+*Warning: Most of the code here is written in a sense of fast prototyping and trying things out, it's possible that I will clean things up in the future, time will tell...*
+
 ## hue.py
 Used to control my Hue lights, this script runs all the time and manages the state.
 
